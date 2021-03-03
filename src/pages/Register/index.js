@@ -23,6 +23,15 @@ const Register = ({navigation}) => {
       .then((success) => {
         setLoading(false);
         setForm('reset');
+        const data = {
+          fullName: form.fullName,
+          profession: form.profession,
+          email: form.email,
+        };
+
+        Firebase.database()
+          .ref('users/' + success.user.uid + '/')
+          .set(data);
         console.log('register sukses: ', success);
       })
       .catch((error) => {
