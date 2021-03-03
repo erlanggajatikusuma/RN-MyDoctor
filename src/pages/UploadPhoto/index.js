@@ -2,27 +2,27 @@ import React, {useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {IconAddPhoto, IconRemovePhoto, ILNullPhoto} from '../../assets';
 import {Button, Link, Header, Gap} from '../../components';
-import {colors, fonts} from '../../utils';
+import {colors, fonts, storeData} from '../../utils';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {showMessage} from 'react-native-flash-message';
+import {Firebase} from '../../config';
 
 const UploadPhoto = ({navigation, route}) => {
-  const {fullName, profession} = route.params;
+  const {fullName, profession, uid} = route.params;
   const [hasPhoto, setHasPhoto] = useState(false);
   const [photo, setPhoto] = useState(ILNullPhoto);
+  const [photoForDB, setPhotoForDB] = useState('');
 
   const getImage = () => {
     launchImageLibrary(
       {
         mediaType: 'photo',
-        maxWidth: 700,
-        maxHeight: 700,
-        quality: 1,
+        quality: 0.5,
+        maxHeight: 250,
+        maxWidth: 250,
         includeBase64: true,
-        saveToPhotos: true,
       },
       (response) => {
-        console.log('response: ', response);
         if (response.didCancel || response.error) {
           showMessage({
             message: 'Oops, sepertinya anda tidak memilih fotonya',
@@ -31,7 +31,9 @@ const UploadPhoto = ({navigation, route}) => {
             color: colors.white,
           });
         } else {
+          const base64Photo = `data:${response.type};base64, ${response.base64}`;
           const source = {uri: response.uri};
+          setPhotoForDB(base64Photo);
           setPhoto(source);
           setHasPhoto(true);
         }
@@ -39,6 +41,16 @@ const UploadPhoto = ({navigation, route}) => {
     );
   };
 
+  const uploadAndContinue = () => {
+    Firebase.database().ref(`users/${uid}/`).update({photo: photoForDB});
+
+    const data = route.params;
+    data.photo = photoForDB;
+
+    storeData('user', data);
+
+    navigation.replace('MainApp');
+  };
   return (
     <View style={styles.page}>
       <Header title="Upload Photo" />
@@ -56,7 +68,7 @@ const UploadPhoto = ({navigation, route}) => {
           <Button
             disable={!hasPhoto}
             title="Upload and Continue"
-            onPress={() => navigation.replace('MainApp')}
+            onPress={uploadAndContinue}
           />
           <Gap height={30} />
           <Link
