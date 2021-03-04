@@ -16,7 +16,7 @@ const UploadPhoto = ({navigation, route}) => {
     launchImageLibrary(
       {
         mediaType: 'photo',
-        quality: 0.5,
+        quality: 0.3,
         maxHeight: 200,
         maxWidth: 200,
         includeBase64: true,
@@ -24,12 +24,6 @@ const UploadPhoto = ({navigation, route}) => {
       (response) => {
         if (response.didCancel || response.error) {
           showError('Oops, sepertinya anda tidak memilih fotonya');
-          // showMessage({
-          //   message: 'Oops, sepertinya anda tidak memilih fotonya',
-          //   type: 'default',
-          //   backgroundColor: colors.error,
-          //   color: colors.white,
-          // });
         } else {
           const base64Photo = `data:${response.type};base64, ${response.base64}`;
           const source = {uri: response.uri};

@@ -81,7 +81,7 @@ const UpdateProfile = ({navigation}) => {
     launchImageLibrary(
       {
         mediaType: 'photo',
-        quality: 0.5,
+        quality: 0.3,
         maxHeight: 200,
         maxWidth: 200,
         includeBase64: true,
