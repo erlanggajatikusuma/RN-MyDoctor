@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {IconAddPhoto, IconRemovePhoto, ILNullPhoto} from '../../assets';
-import {Button, Link, Header, Gap} from '../../components';
-import {colors, fonts, storeData} from '../../utils';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {showMessage} from 'react-native-flash-message';
+import {IconAddPhoto, IconRemovePhoto, ILNullPhoto} from '../../assets';
+import {Button, Gap, Header, Link} from '../../components';
 import {Firebase} from '../../config';
+import {colors, fonts, showError, storeData} from '../../utils';
 
 const UploadPhoto = ({navigation, route}) => {
   const {fullName, profession, uid} = route.params;
@@ -24,12 +23,13 @@ const UploadPhoto = ({navigation, route}) => {
       },
       (response) => {
         if (response.didCancel || response.error) {
-          showMessage({
-            message: 'Oops, sepertinya anda tidak memilih fotonya',
-            type: 'default',
-            backgroundColor: colors.error,
-            color: colors.white,
-          });
+          showError('Oops, sepertinya anda tidak memilih fotonya');
+          // showMessage({
+          //   message: 'Oops, sepertinya anda tidak memilih fotonya',
+          //   type: 'default',
+          //   backgroundColor: colors.error,
+          //   color: colors.white,
+          // });
         } else {
           const base64Photo = `data:${response.type};base64, ${response.base64}`;
           const source = {uri: response.uri};

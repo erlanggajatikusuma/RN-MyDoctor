@@ -2,9 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ILNullPhoto} from '../../assets';
 import {Gap, Header, List, Profile} from '../../components';
-import {colors, getData} from '../../utils';
 import {Firebase} from '../../config';
-import {showMessage} from 'react-native-flash-message';
+import {colors, getData, showError} from '../../utils';
 
 const UserProfile = ({navigation}) => {
   const [profile, setProfile] = useState({
@@ -25,16 +24,10 @@ const UserProfile = ({navigation}) => {
     Firebase.auth()
       .signOut()
       .then(() => {
-        console.log('signOut');
         navigation.replace('GetStarted');
       })
       .catch((error) => {
-        showMessage({
-          message: error.message,
-          type: 'default',
-          backgroundColor: colors.error,
-          color: colors.white,
-        });
+        showError(error.message);
       });
   };
   return (

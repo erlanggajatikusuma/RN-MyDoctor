@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
-import {Button, Gap, Header, Input, Profile} from '../../components';
-import {colors, getData, storeData} from '../../utils';
-import {Firebase} from '../../config';
-import {showMessage} from 'react-native-flash-message';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {ILNullPhoto} from '../../assets';
+import {Button, Gap, Header, Input, Profile} from '../../components';
+import {Firebase} from '../../config';
+import {colors, getData, showError, storeData} from '../../utils';
 
 const UpdateProfile = ({navigation}) => {
   const [profile, setProfile] = useState({
@@ -27,17 +26,15 @@ const UpdateProfile = ({navigation}) => {
   }, []);
 
   const update = () => {
-    console.log('Profile: ', profile);
-    console.log('New Password: ', password);
-
     if (password.length > 0) {
       if (password.length < 6) {
-        showMessage({
-          message: 'Password min 6 characters',
-          type: 'default',
-          backgroundColor: colors.error,
-          color: colors.white,
-        });
+        showError('Password min 6 characters');
+        // showMessage({
+        //   message: 'Password min 6 characters',
+        //   type: 'default',
+        //   backgroundColor: colors.error,
+        //   color: colors.white,
+        // });
       } else {
         updatePassword();
         updateProfileData();
@@ -53,12 +50,7 @@ const UpdateProfile = ({navigation}) => {
     Firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         user.updatePassword(password).catch((error) => {
-          showMessage({
-            message: error.message,
-            type: 'default',
-            backgroundColor: colors.error,
-            color: colors.white,
-          });
+          showError(error.message);
         });
       }
     });
@@ -71,16 +63,10 @@ const UpdateProfile = ({navigation}) => {
       .ref(`users/${profile.uid}/`)
       .update(data)
       .then(() => {
-        console.log('Success', data);
         storeData('user', data);
       })
       .catch((error) => {
-        showMessage({
-          message: error.message,
-          type: 'default',
-          backgroundColor: colors.error,
-          color: colors.white,
-        });
+        showError(error.message);
       });
   };
 
@@ -102,12 +88,13 @@ const UpdateProfile = ({navigation}) => {
       },
       (response) => {
         if (response.didCancel || response.error) {
-          showMessage({
-            message: 'Oops, sepertinya anda tidak memilih fotonya',
-            type: 'default',
-            backgroundColor: colors.error,
-            color: colors.white,
-          });
+          showError('Oops, sepertinya anda tidak memilih fotonya');
+          // showMessage({
+          //   message: 'Oops, sepertinya anda tidak memilih fotonya',
+          //   type: 'default',
+          //   backgroundColor: colors.error,
+          //   color: colors.white,
+          // });
         } else {
           const base64Photo = `data:${response.type};base64, ${response.base64}`;
           const source = {uri: response.uri};
