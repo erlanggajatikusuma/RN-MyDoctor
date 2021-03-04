@@ -26,11 +26,47 @@ const UpdateProfile = ({navigation}) => {
     });
   }, []);
 
-  const updateProfile = () => {
+  const update = () => {
     console.log('Profile: ', profile);
+    console.log('New Password: ', password);
+
+    if (password.length > 0) {
+      if (password.length < 6) {
+        showMessage({
+          message: 'Password min 6 characters',
+          type: 'default',
+          backgroundColor: colors.error,
+          color: colors.white,
+        });
+      } else {
+        updatePassword();
+        updateProfileData();
+        navigation.replace('MainApp');
+      }
+    } else {
+      updateProfileData();
+      navigation.replace('MainApp');
+    }
+  };
+
+  const updatePassword = () => {
+    Firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        user.updatePassword(password).catch((error) => {
+          showMessage({
+            message: error.message,
+            type: 'default',
+            backgroundColor: colors.error,
+            color: colors.white,
+          });
+        });
+      }
+    });
+  };
+
+  const updateProfileData = () => {
     const data = profile;
     data.photo = photoDB;
-
     Firebase.database()
       .ref(`users/${profile.uid}/`)
       .update(data)
@@ -46,7 +82,6 @@ const UpdateProfile = ({navigation}) => {
           color: colors.white,
         });
       });
-    // navigation.goBack('UserProfile')
   };
 
   const changeText = (key, value) => {
@@ -61,8 +96,8 @@ const UpdateProfile = ({navigation}) => {
       {
         mediaType: 'photo',
         quality: 0.5,
-        maxHeight: 250,
-        maxWidth: 250,
+        maxHeight: 200,
+        maxWidth: 200,
         includeBase64: true,
       },
       (response) => {
@@ -103,9 +138,14 @@ const UpdateProfile = ({navigation}) => {
           <Gap height={24} />
           <Input label="Email" value={profile.email} disable />
           <Gap height={24} />
-          <Input label="Password" value={password} />
+          <Input
+            label="Password"
+            secureTextEntry
+            value={password}
+            onChangeText={(value) => setPassword(value)}
+          />
           <Gap height={40} />
-          <Button title="Save Profile" onPress={updateProfile} />
+          <Button title="Save Profile" onPress={update} />
         </View>
       </ScrollView>
     </View>

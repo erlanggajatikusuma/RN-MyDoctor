@@ -36,7 +36,7 @@ const Register = ({navigation}) => {
           .set(data);
 
         storeData('user', data);
-        navigation.navigate('UploadPhoto', data);
+        navigation.replace('UploadPhoto', data);
         console.log('register sukses: ', success);
       })
       .catch((error) => {

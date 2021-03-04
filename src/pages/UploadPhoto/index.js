@@ -18,8 +18,8 @@ const UploadPhoto = ({navigation, route}) => {
       {
         mediaType: 'photo',
         quality: 0.5,
-        maxHeight: 250,
-        maxWidth: 250,
+        maxHeight: 200,
+        maxWidth: 200,
         includeBase64: true,
       },
       (response) => {
