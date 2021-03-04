@@ -1,23 +1,32 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {ChatItem, Header, InputChat} from '../../components';
 import {colors, fonts} from '../../utils';
 
-const Chatting = ({navigation}) => {
+const Chatting = ({navigation, route}) => {
+  const dataDoctor = route.params;
   return (
     <View style={styles.page}>
       <Header
         type="dark-profile"
-        title="Nairobi Putra Hayza"
+        title={dataDoctor.data.fullName}
+        desc={dataDoctor.data.category}
+        photo={{uri: dataDoctor.data.photo}}
         onPress={() => navigation.goBack()}
       />
       <View style={styles.content}>
-        <Text style={styles.chatDate}>Senin, 21 Maret 2020</Text>
-        <ChatItem isMe />
-        <ChatItem />
-        <ChatItem isMe />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={styles.chatDate}>Senin, 21 Maret 2020</Text>
+          <ChatItem isMe />
+          <ChatItem />
+          <ChatItem isMe />
+        </ScrollView>
       </View>
-      <InputChat />
+      <InputChat
+        value="h"
+        onChangeText={() => alert('Change text')}
+        onButtonPress={() => alert('Button press')}
+      />
     </View>
   );
 };
