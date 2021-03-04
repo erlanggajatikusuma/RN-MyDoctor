@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import {DummyDoctor1, DummyDoctor2, DummyDoctor3} from '../../assets';
 import {
   DoctorCategory,
   Gap,
@@ -39,10 +38,8 @@ const Doctor = ({navigation}) => {
       .limitToLast(3)
       .once('value')
       .then((res) => {
-        console.log('Top Rated: ', res.val());
         if (res.val()) {
           const data = parseArray(res.val());
-          console.log('Data Parse: ', data);
           setDoctors(data);
         }
       })
@@ -98,7 +95,7 @@ const Doctor = ({navigation}) => {
                     <DoctorCategory
                       category={item.category}
                       key={item.id}
-                      onPress={() => navigation.navigate('ChooseDoctor')}
+                      onPress={() => navigation.navigate('ChooseDoctor', item)}
                     />
                   );
                 })}
