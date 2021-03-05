@@ -17,6 +17,12 @@ const Chatting = ({navigation, route}) => {
   const [user, setUser] = useState({});
   const [chatData, setChatData] = useState([]);
 
+  const getDataUserLocal = () => {
+    getData('user').then((res) => {
+      setUser(res);
+    });
+  };
+
   useEffect(() => {
     getDataUserLocal();
     const chatID = `${user.uid}_${dataDoctor.data.uid}`;
@@ -44,20 +50,14 @@ const Chatting = ({navigation, route}) => {
               data: newDataChat,
             });
           });
-          console.log('All Data Chat: ', allDataChat);
           setChatData(allDataChat);
         }
       });
-  }, []);
-
-  const getDataUserLocal = () => {
-    getData('user').then((res) => {
-      setUser(res);
-    });
-  };
+  }, [dataDoctor.data.uid, user.uid]);
 
   const chatSend = () => {
     const today = new Date();
+
     const chatID = `${user.uid}_${dataDoctor.data.uid}`;
     const urlFirebase = `chatting/${chatID}/allChat/${setDateChat(today)}`;
     const urlMessageUser = `messages/${user.uid}/${chatID}`;

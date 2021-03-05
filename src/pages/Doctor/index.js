@@ -8,28 +8,27 @@ import {
   RatedDoctor,
 } from '../../components';
 import {Firebase} from '../../config';
-import {colors, fonts, showError} from '../../utils';
+import {colors, fonts, getData, showError} from '../../utils';
+import {ILNullPhoto} from '../../assets';
 
 const Doctor = ({navigation}) => {
   const [news, setNews] = useState([]);
   const [categoryDoctor, setCategoryDoctor] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const [profile, setProfile] = useState({
+    photo: ILNullPhoto,
+    fullName: '',
+    profession: '',
+  });
+
   useEffect(() => {
     getNews();
     getCategoryDoctor();
     getTopRatedDoctor();
-  }, []);
-
-  const parseArray = (listObject) => {
-    const data = [];
-    Object.keys(listObject).map((key) => {
-      data.push({
-        id: key,
-        data: listObject[key],
-      });
+    navigation.addListener('focus', () => {
+      getUserData();
     });
-    return data;
-  };
+  }, [navigation]);
 
   const getTopRatedDoctor = () => {
     Firebase.database()
@@ -39,7 +38,14 @@ const Doctor = ({navigation}) => {
       .once('value')
       .then((res) => {
         if (res.val()) {
-          const data = parseArray(res.val());
+          const oldData = res.val();
+          const data = [];
+          Object.keys(oldData).map((key) => {
+            data.push({
+              id: key,
+              data: oldData[key],
+            });
+          });
           setDoctors(data);
         }
       })
@@ -79,13 +85,25 @@ const Doctor = ({navigation}) => {
         showError(error.message);
       });
   };
+
+  const getUserData = () => {
+    getData('user').then((res) => {
+      const data = res;
+      data.photo = res?.photo?.length > 1 ? {uri: res.photo} : ILNullPhoto;
+      setProfile(res);
+    });
+  };
+
   return (
     <View style={styles.page}>
       <View style={styles.content}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.wrapperSection}>
             <Gap height={30} />
-            <HomeProfile onPress={() => navigation.navigate('UserProfile')} />
+            <HomeProfile
+              profile={profile}
+              onPress={() => navigation.navigate('UserProfile')}
+            />
             <Text style={styles.welcome}>
               Mau konsultasi dengan siapa hari ini?
             </Text>

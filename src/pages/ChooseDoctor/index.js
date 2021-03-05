@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {DummyDoctor1} from '../../assets';
 import {Header, List} from '../../components';
 import {Firebase} from '../../config';
 import {colors} from '../../utils';
@@ -11,7 +10,7 @@ const ChooseDoctor = ({navigation, route}) => {
 
   useEffect(() => {
     callDoctorByCategory(itemCategory.category);
-  }, []);
+  }, [itemCategory.category]);
 
   const callDoctorByCategory = (category) => {
     Firebase.database()
